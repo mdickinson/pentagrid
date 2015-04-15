@@ -16,7 +16,7 @@ def rhombus(ps, r, s, kr, ks):
 
 def tiling(params, size):
     return (rhombus(params, r, s, i, j)
-            for r in range(5) for s in range(5) if r != s
+            for r in range(5) for s in range(r+1, 5)
             for i in range(-size, size+1) for j in range(-size, size+1))
 
 

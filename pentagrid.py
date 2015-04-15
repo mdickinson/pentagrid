@@ -5,30 +5,30 @@ Reference: "Algebraic theory of Penrose's non-periodic tilings
 of the plane", N.G. de Bruijn.
 """
 # Fifth roots of unity.
-zs = [(-1)**(.4*i) for i in range(5)]
+zeta = [(-1)**(.4*i) for i in range(5)]
 
 
 def rhombus_at_intersection(gamma, r, s, kr, ks):
     """
-    Return the rhombus corresponding to a pentagrid intersection point.
+    Find the rhombus corresponding to a pentagrid intersection point.
 
-    Returns a list of four complex numbers, giving the vertices of the rhombus
+    Generates four complex numbers, giving the vertices of the rhombus
     corresponding in the pentagrid described by parameters gamma to the
     intersection of the two lines with equations:
 
-       (z/zs[r]).real + gamma[r] == kr
+       (z/zeta[r]).real + gamma[r] == kr
 
     and
 
-       (z/zs[s]).real + gamma[s] == ks
+       (z/zeta[s]).real + gamma[s] == ks
 
     The vertices traverse the perimeter of the rhombus in order (though that
     order may be either clockwise or counterclockwise).
     """
-    z0 = 1j * (zs[r]*(ks - gamma[s]) - zs[s]*(kr - gamma[r])) / zs[s-r].imag
-    k = [0--((z0/t).real+p)//1 for t, p in zip(zs, gamma)]
-    return (sum(x*t for t, x in zip(zs, k)) for k[r] in (kr, kr+1)
-            for k[s] in (ks+k[r]%2, ks+~k[r]%2))
+    z0 = 1j*(zeta[r]*(ks-gamma[s]) - zeta[s]*(kr-gamma[r])) / zeta[s-r].imag
+    k = [0--((z0/t).real+p)//1 for t, p in zip(zeta, gamma)]
+    for k[r], k[s] in [(kr, ks), (kr+1, ks), (kr+1, ks+1), (kr, ks+1)]:
+        yield sum(x*t for t, x in zip(zeta, k))
 
 
 def tiling(gamma, size):
@@ -43,14 +43,14 @@ def tiling(gamma, size):
                     yield rhombus_at_intersection(gamma, r, s, kr, ks), color
 
 
-def to_canvas(zs, scale, center):
+def to_canvas(vertices, scale, center):
     """
     Transform complex values to canvas points.
 
     Generates an interleaved list (x0, y0, x1, y1, ...), suitable
     for passing to Canvas.create_polygon.
     """
-    for z in zs:
+    for z in vertices:
         w = center + scale*z
         yield from (w.real, w.imag)
 
